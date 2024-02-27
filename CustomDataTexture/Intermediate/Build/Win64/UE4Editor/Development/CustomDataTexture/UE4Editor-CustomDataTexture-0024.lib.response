@@ -1,0 +1,13 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-CustomDataTexture-0024.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Intermediate\Build\Win64\CustomData3Editor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Intermediate\Build\Win64\UE4Editor\Development\CustomDataTexture\Module.CustomDataTexture.cpp.obj"
+"C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Intermediate\Build\Win64\UE4Editor\Development\CustomDataTexture\Module.CustomDataTexture.gen.cpp.obj"
+"C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Intermediate\Build\Win64\UE4Editor\Development\CustomDataTexture\Default.rc2.res"
+/OUT:"C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Intermediate\Build\Win64\UE4Editor\Development\CustomDataTexture\UE4Editor-CustomDataTexture-0024.lib"

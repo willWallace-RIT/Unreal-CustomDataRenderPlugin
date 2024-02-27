@@ -1,0 +1,42 @@
+#pragma once
+#include "/Engine/Public/Platform.ush"
+
+float4x4 ProjectionMatrix;
+float4x4 ViewMatrix;
+
+struct inputS
+{
+			float4 WorldMatrix0:ATTRIBUTE0;
+			float4 WorldMatrix1:ATTRIBUTE1;
+			float4 WorldMatrix2:ATTRIBUTE2;
+			float4 WorldMatrix3:ATTRIBUTE3;
+			float4 VertexPos : ATTRIBUTE4;
+			float3 Scale : ATTRIBUTE5;
+			float4 Color : ATTRIBUTE6;
+
+};
+
+struct outS{
+			centroid float4 Pos: SV_Position;
+			centroid float4 ScaledLocalPosition:TEXCOORD0;
+			centroid float3 ScreenPos:TEXCOORD1;
+};
+outS MainVS (uint ID : SV_VertexID,inputS input
+			 ){
+			outS output;
+			float4x4 WorldMatrix = {input.WorldMatrix0.x,input.WorldMatrix0.y,input.WorldMatrix0.z,input.WorldMatrix0.w,
+								input.WorldMatrix1.x,input.WorldMatrix1.y,input.WorldMatrix1.z,input.WorldMatrix1.w,
+								input.WorldMatrix2.x,input.WorldMatrix2.y,input.WorldMatrix2.z,input.WorldMatrix2.w,
+								input.WorldMatrix3.x,input.WorldMatrix3.y,input.WorldMatrix3.z,input.WorldMatrix3.w};
+			
+			output.Pos = mul(float4(input.VertexPos.xyz,1.0),mul(mul(WorldMatrix,ViewMatrix),ProjectionMatrix));
+			output.ScreenPos = output.Pos.xyz;
+			output.ScaledLocalPosition = float4(input.Scale.x*input.VertexPos.x,input.Scale.y*input.VertexPos.y,input.Scale.z*input.VertexPos.z,1.0);
+			return output;
+}
+
+float4 MainPS(outS input):SV_Target0{
+				float4 OutPosition = float4(input.ScaledLocalPosition);
+				OutPosition.w = 1.0;
+				return OutPosition;
+}

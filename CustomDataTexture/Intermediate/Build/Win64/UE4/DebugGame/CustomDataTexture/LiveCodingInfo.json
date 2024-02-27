@@ -1,0 +1,15 @@
+{
+	"RemapUnityFiles": 
+	{
+		"Module.CustomDataTexture.cpp.obj": [
+			"CustomDataBlueprintLibrary.cpp.obj",
+			"CustomDataRendering.cpp.obj",
+			"CustomDataTexture.cpp.obj"
+		],
+		"Module.CustomDataTexture.gen.cpp.obj": [
+			"CustomDataAPI.gen.cpp.obj",
+			"CustomDataBlueprintLibrary.gen.cpp.obj",
+			"CustomDataTexture.init.gen.cpp.obj"
+		]
+	}
+}

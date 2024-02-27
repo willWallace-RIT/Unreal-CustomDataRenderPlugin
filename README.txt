@@ -1,0 +1,59 @@
+Its still a little rough but it should be working at least in editor mode.
+
+Install: Unzip and Add CustomDataTexture plugin folder to [unreal project folder]/Plugins
+
+Build- Right click on unreal file in project folder and rebuild sln files then build using one of the with Editor builds.
+
+To use:
+-Set View options to to include plugins content. 
+-Add CustomDataTextureExample Blueprint Actor to map.
+-Set Either the camera variable to a camera actor and uncheck Example checkbox OR if using the firstpersonexample project template set the first person character object.
+-At this point you should be able to render to a render target using the callable function. It should by default use the rendertarget in the plugins folder.
+-To Showcase it working in realtime add a post process volume to the scene (set it to unbound if you want it to always render) and set the post process material to CustomDataTexturePostMaterial
+
+LIMITATIONS:
+So far it has been tested working with static mesh actors. The may still be some problems with skeletal mesh actors.
+Build requires CPU vertex access.
+I'm still working out the kinks with skellies and the way I found so far to  grab indices uses multisizeindexcontainers. the GetIndexBufferData() function specifically is Enclosed in an WITH_EDITOR directive for a reason I have yet to ascertain.
+Because of this it currently still only works in editor only.
+
+
+BUILDING YOUR OWN CUSTOM DATA TO PASS TO A RENDER TARGET:
+
+Building a shader:
+	CustomDataTexture/Shaders/Private-
+		-Create a usf file in the CustomDataTexture/Shaders/Private Folder
+		-The usf format is basically hlsl with a few modification. Shader Parameter are just declared as their data type before the function calls. 
+		-Although a little old see https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/Rendering/ShaderInPlugin/QuickStart/ for more details.
+	CustomDataTexture/Source/CustomDataTexture/Private/CustomDataRendering.cpp
+		-Add the filename and the function call for your vertex and pixel shader in the IMPLEMENT_SHADER_TYPE
+		Note: the directory structure is a little different in the compile environment.
+
+
+CPU Data to pass for all vertices of all primitives:
+	CustomDataTexture/Source/CustDataTexture/Classes/CustomDataAPI.h-
+		-In CustomDataAPI.h add variable that you want to be in the make model struct as a UProperty
+		-For posterity you should also add it to the == operator as well.
+
+	CustomDataTexture/Source/CustomDataTexture/Private/CustomDataRendering.cpp-
+		-These variables need to be added to the FCompiledCTDGModel struct in CustomDataRendering.cpp and passed to the Compiled Model in the DrawGeometryToRenderTarget function.
+		-From there in the CustomDataGenerationVS and CustomDataGenerationPS classes add the SHADERPARAMETER after BEGIN_SHADER_PARAMETER_STRUCT with a specified type and unique name.
+		-Use that same name in a LAYOUT_FIELD command and a type of FShaderResourceParameter under private. 
+		-In the DrawCustomDataToRenderTarget_RenderThread function in after passParameter and passParameterPS pass the appropriate value from the compiled model.
+		-From there just make sure the variable of the appropriate type is the the shader
+
+Adding VertexData to send to the GPU
+	CustomDataTexture/Source/CustDataTexture/Classes/CustomDataAPI.h
+		-Add the data variable to the FVertex struct, be mindful of byte size and offset in struct. GPU is raw byte size on after another while a struct in c++ is in sections of 16
+		-For data that changes per object and vertex, adding TArray that that is not a UProperty might also be useful.
+		-While this will be probably be done at your discretion in future steps declaring functions to be run when you build the vertex array is can also be declared here.
+	CustomDataTexture/Source/CustomDataTexture/Private/CustomDataRendering.cpp-
+		-In the FOBJPositionBuffer struct, add an FVertex element in the same order it appears in the struct. STRUCT_OFFSET in offset and the available types are EVertexElementType enums. 
+		Note:There can only be 16 of these elements.
+		-In the BuildArrays function populate your tArrays for various data in each commented section verts is a perobject vertex, tris is per object index. these arrays have different amounts.
+		-In section C add the data to the struct in same order the struct is made.
+	CustomDataTexture/Shaders/Private/????.usf
+		declare a struct  in the usf in the same order as the FVertex struct
+		add as input after SV_VertexID in the Vertex Shader function.
+
+You should now have custom data to add to the render target.

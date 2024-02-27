@@ -1,0 +1,2 @@
+C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Intermediate\Build\Win64\UE4Editor\Development\CustomDataTexture\Definitions.CustomDataTexture.h
+C:\Users\wg4466\Documents\Unreal Projects\CustomData3\Plugins\CustomDataTexture\Source\CustomDataTexture\Public\CustomDataTexture.h
